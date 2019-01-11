@@ -5,7 +5,7 @@ fn index(_req: HttpRequest) -> impl Responder {
 }
 
 fn hello(path: Path<String>) -> impl Responder {
-    format!("[user_routes.rs] Hello {}!", *path)
+    format!("Hello from user, {} !", *path)
 }
 
 #[inline(always)]

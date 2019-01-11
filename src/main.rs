@@ -19,11 +19,14 @@ fn main() {
 
     server::new(|| {
         vec![
-            App::new()
-                .resource("/", |r| r.method(Method::GET).with(index))
-                .resource("/hello/{name}", |r| r.method(Method::GET).with(hello)),
-            auth::routes::get_routes() ,
+
+//            App::new()
+//                .resource("/auth/{name}", |r| r.method(Method::GET).with(hello)),
+            auth::routes::get_routes(),
             user::routes::get_routes(),
+            App::new()
+                .prefix("/")
+                .resource("/hello/{name}", |r| r.method(Method::GET).with(hello)),
         ]
     })
     .bind(format!("127.0.0.1:{}", port))

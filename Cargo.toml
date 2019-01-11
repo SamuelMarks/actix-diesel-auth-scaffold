@@ -1,0 +1,9 @@
+[package]
+name = "actix-diesel-auth-scaffold"
+version = "0.0.1"
+authors = ["Samuel Marks @SamuelMarks"]
+edition = "2018"
+
+[dependencies]
+actix-web = {"git" = "https://github.com/offscale/actix-web", "branch" = "pub-app"}
+lazy_static = "1.2.0"

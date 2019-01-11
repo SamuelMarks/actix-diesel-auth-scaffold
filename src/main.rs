@@ -3,11 +3,11 @@ use actix_diesel_auth_scaffold::user;
 use actix_web::{http::Method, server, App, HttpRequest, Path, Responder};
 
 fn index(_req: HttpRequest) -> impl Responder {
-    "Hello from the index page"
+    "[main.rs] `index`"
 }
 
 fn hello(path: Path<String>) -> impl Responder {
-    format!("Hello {}!", *path)
+    format!("[main.rs] `hello` with arg: {}", *path)
 }
 
 fn main() {
@@ -19,13 +19,10 @@ fn main() {
 
     server::new(|| {
         vec![
-
-//            App::new()
-//                .resource("/auth/{name}", |r| r.method(Method::GET).with(hello)),
             auth::routes::get_routes(),
             user::routes::get_routes(),
             App::new()
-                .prefix("/")
+                .resource("/", |r| r.method(Method::GET).with(index))
                 .resource("/hello/{name}", |r| r.method(Method::GET).with(hello)),
         ]
     })

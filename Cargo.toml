@@ -5,5 +5,4 @@ authors = ["Samuel Marks @SamuelMarks"]
 edition = "2018"
 
 [dependencies]
-actix-web = {"git" = "https://github.com/offscale/actix-web", "branch" = "pub-app"}
-lazy_static = "1.2.0"
+actix-web = "0.7.18"

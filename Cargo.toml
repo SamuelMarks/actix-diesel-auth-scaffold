@@ -1,8 +1,11 @@
 [package]
 name = "actix-diesel-auth-scaffold"
-version = "0.0.1"
+version = "0.0.2-alpha"
 authors = ["Samuel Marks @SamuelMarks"]
 edition = "2018"
 
 [dependencies]
 actix-web = "0.7.18"
+dotenv = "0.13.0"
+diesel = {version="1.4.1", features=["postgres"]}
+lazy_static = "1.2.0"

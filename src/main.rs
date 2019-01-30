@@ -1,6 +1,14 @@
-use actix_diesel_auth_scaffold::auth;
-use actix_diesel_auth_scaffold::user;
+#[macro_use]
+extern crate lazy_static;
+
+use actix_diesel_auth_scaffold::{auth, config, user};
 use actix_web::{http::Method, server, App, HttpRequest, Path, Responder};
+
+lazy_static! {
+    pub static ref CONNECTION: diesel::pg::PgConnection = config::establish_connection();
+}
+
+// TODO: Replace with https://docs.diesel.rs/r2d2/index.html
 
 fn index(_req: HttpRequest) -> impl Responder {
     "[main.rs] `index`"

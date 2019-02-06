@@ -1,6 +1,3 @@
-//#[macro_use]
-//extern crate lazy_static;
-//
 //use actix_diesel_auth_scaffold::{auth, config, user};
 //use actix_web::{http::Method, server, App, HttpRequest, Path, Responder};
 //use diesel::prelude::*;
@@ -36,50 +33,30 @@
 //    .run();
 //}
 
-
 //!
 //! Diesel does not support tokio, so we have to run it in separate threads.
 //! Actix supports sync actors by default, so we going to create sync actor
 //! that use diesel. Technically sync actors are worker style actors, multiple
 //! of them can run in parallel and process messages from same queue.
-extern crate serde;
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate diesel;
-extern crate actix;
-extern crate actix_web;
-extern crate env_logger;
-extern crate futures;
-extern crate r2d2;
-extern crate uuid;
 
 use actix::prelude::*;
 use actix_web::{
-    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path,
-    State,
+    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, State,
 };
 
 use diesel::prelude::*;
 use diesel::r2d2::ConnectionManager;
 use futures::Future;
 
-mod db;
-mod models;
-mod schema;
-
 use db::{CreateUser, DbExecutor};
 
 /// State with DbExecutor address
 struct AppState {
-    db: Addr<Syn, DbExecutor>,
+    db: Addr<DbExecutor>,
 }
 
 /// Async request handler
-fn index(
-    (name, state): (Path<String>, State<AppState>),
-) -> FutureResponse<HttpResponse> {
+fn index((name, state): (Path<String>, State<AppState>)) -> FutureResponse<HttpResponse> {
     // send async `CreateUser` message to a `DbExecutor`
     state
         .db
@@ -109,13 +86,14 @@ fn main() {
 
     // Start http server
     server::new(move || {
-        App::with_state(AppState{db: addr.clone()})
+        App::with_state(AppState { db: addr.clone() })
             // enable logger
             .middleware(middleware::Logger::default())
             .resource("/{name}", |r| r.method(http::Method::GET).with(index))
-    }).bind("127.0.0.1:8080")
-        .unwrap()
-        .start();
+    })
+    .bind("127.0.0.1:8080")
+    .unwrap()
+    .start();
 
     println!("Started http server: 127.0.0.1:8080");
     let _ = sys.run();

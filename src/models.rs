@@ -1,4 +1,4 @@
-use super::schema::users;
+#![feature(custom_attribute)]
 
 #[derive(Serialize, Queryable)]
 pub struct User {

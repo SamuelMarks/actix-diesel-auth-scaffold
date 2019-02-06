@@ -1,25 +1,9 @@
-extern crate serde;
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate diesel;
-extern crate actix;
-extern crate actix_web;
-extern crate env_logger;
-extern crate futures;
-extern crate r2d2;
-extern crate uuid;
-extern crate bytes;
-// extern crate json;
-
-
-use bytes::BytesMut;
 use actix::prelude::*;
 use actix_web::{
-    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, Error, HttpRequest,
-    State, HttpMessage, error, Json
+    error, http, middleware, server, App, AsyncResponder, Error, FutureResponse, HttpMessage,
+    HttpRequest, HttpResponse, Json, Path, State,
 };
+use bytes::BytesMut;
 
 use diesel::prelude::*;
 use diesel::r2d2::ConnectionManager;
@@ -27,15 +11,14 @@ use futures::{future, Future, Stream};
 
 mod db;
 mod models;
-mod schema;
 mod oauth;
+mod schema;
 
-use db::{CreateUser, GetToken, Authorise, DbExecutor};
+use db::{Authorise, CreateUser, DbExecutor, GetToken};
 
 struct AppState {
     db: Addr<DbExecutor>,
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 struct MyUser {
@@ -45,24 +28,27 @@ struct MyUser {
 
 const MAX_SIZE: usize = 262_144; // max payload size is 256k
 
-
-fn create_user((item, state): (Json<MyUser>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
+fn create_user(
+    (item, state): (Json<MyUser>, State<AppState>),
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let copy = item.into_inner();
 
-    state.db
-         .send(CreateUser {
-             name: copy.name.clone(),
-             password: copy.password.clone(),
-         })
-         .from_err()
-         .and_then(|res| match res {
-             Ok(user) => Ok(HttpResponse::Ok().json(user)),
-             Err(_) => Ok(HttpResponse::InternalServerError().into()),
-         })
+    state
+        .db
+        .send(CreateUser {
+            name: copy.name.clone(),
+            password: copy.password.clone(),
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(user) => Ok(HttpResponse::Ok().json(user)),
+            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+        })
 }
 
-fn get_token((item, state): (Json<oauth::Credentials>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-
+fn get_token(
+    (item, state): (Json<oauth::Credentials>, State<AppState>),
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let copy = item.into_inner();
 
     state
@@ -76,12 +62,11 @@ fn get_token((item, state): (Json<oauth::Credentials>, State<AppState>)) -> impl
             Ok(user) => Ok(HttpResponse::Ok().json(user)),
             Err(_) => Ok(HttpResponse::InternalServerError().into()),
         })
-
-
 }
 
-fn authorise((item, state): (Json<oauth::Token>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-
+fn authorise(
+    (item, state): (Json<oauth::Token>, State<AppState>),
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let copy = item.into_inner();
 
     state
@@ -95,7 +80,6 @@ fn authorise((item, state): (Json<oauth::Token>, State<AppState>)) -> impl Futur
             Ok(user) => Ok(HttpResponse::Ok().json(user)),
             Err(_) => Ok(HttpResponse::InternalServerError().into()),
         })
-
 }
 
 fn main() {
@@ -112,31 +96,31 @@ fn main() {
 
     // Start http server
     server::new(move || {
-        App::with_state(AppState{db: addr.clone()})
+        App::with_state(AppState { db: addr.clone() })
             // enable logger
             .middleware(middleware::Logger::default())
             .resource("/user", |r| {
                 r.method(http::Method::POST)
-                    .with_async_config(create_user, |(json_cfg, )| {
+                    .with_async_config(create_user, |(json_cfg,)| {
                         json_cfg.0.limit(4096); // <- limit size of the payload
                     })
             })
             .resource("/token", |r| {
                 r.method(http::Method::GET)
-                    .with_async_config(get_token, |(json_cfg, )| {
+                    .with_async_config(get_token, |(json_cfg,)| {
                         json_cfg.0.limit(4096); // <- limit size of the payload
                     })
             })
             .resource("/authorise", |r| {
                 r.method(http::Method::POST)
-                    .with_async_config(authorise,|(json_cfg, )| {
+                    .with_async_config(authorise, |(json_cfg,)| {
                         json_cfg.0.limit(4096); // <- limit size of the payload
                     })
             })
-
-    }).bind("127.0.0.1:8080")
-        .unwrap()
-        .start();
+    })
+    .bind("127.0.0.1:8080")
+    .unwrap()
+    .start();
 
     println!("Started http server: 127.0.0.1:8080");
     let _ = sys.run();

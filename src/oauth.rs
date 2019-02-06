@@ -4,7 +4,6 @@ pub struct Token {
     token_type: TokenType,
     expires_in: u32,
     scope: Scope,
-
 }
 
 type Key = String;
@@ -15,24 +14,21 @@ impl Token {
             access_token: "".to_string(),
             token_type: TokenType::Bearer,
             expires_in: 0,
-            scope: Scope::Create
+            scope: Scope::Create,
         }
     }
 
-    fn verify(&self, key: Key) -> bool {
-        
-    }
+    fn verify(&self, key: Key) -> bool {}
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum TokenType {
-    Bearer
+    Bearer,
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Scope {
-    Create
+    Create,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,4 +36,3 @@ pub struct Credentials {
     pub username: String,
     pub password: String,
 }
-

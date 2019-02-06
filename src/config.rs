@@ -1,8 +1,8 @@
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
-use std::env;
 use r2d2_postgres::PostgresConnectionManager;
+use std::env;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();

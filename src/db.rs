@@ -6,11 +6,8 @@ use diesel::r2d2::{ConnectionManager, Pool};
 use uuid;
 
 use models;
-use schema;
 use oauth;
-
-
-
+use schema;
 
 pub struct DbExecutor(pub Pool<ConnectionManager<SqliteConnection>>);
 
@@ -18,7 +15,6 @@ pub struct CreateUser {
     pub name: String,
     pub password: String,
 }
-
 
 impl Message for CreateUser {
     type Result = Result<models::User, Error>;
@@ -75,13 +71,11 @@ impl Handler<CreateUser> for DbExecutor {
     }
 }
 
-
 impl Handler<GetToken> for DbExecutor {
     type Result = Result<oauth::Token, Error>;
 
     fn handle(&mut self, msg: GetToken, _: &mut Self::Context) -> Self::Result {
         use self::schema::users::dsl::*;
-
 
         let mut items = users
             .filter(name.eq(&msg.username))
@@ -95,7 +89,7 @@ impl Handler<GetToken> for DbExecutor {
             access_token: "efwfew".to_string(),
             token_type: oauth::TokenType::Bearer,
             expires_in: 1500,
-            scope: oauth::Scope::Create
+            scope: oauth::Scope::Create,
         })
     }
 }
@@ -105,7 +99,5 @@ impl Handler<VerifyToken> for DbExecutor {
 
     fn handle(&mut self, msg: GetToken, _: &mut Self::Context) -> Self::Result {
         use self::schema::users::dsl::*;
-
-
     }
 }

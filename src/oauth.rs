@@ -1,3 +1,22 @@
+use ring::{
+    rand,
+    signature::{self, KeyPair},
+};
+
+use error::Error;
+
+
+pub type KeyPair = ring::signature::KeyPair;
+
+pub fn generate_keypair() -> Result<KeyPair, Error> {
+    let rng = rand::SystemRandom::new();
+    let pkcs8_bytes = signature::Ed25519KeyPair::generate_pkcs8(&rng)?;
+
+    signature::Ed25519KeyPair::from_pkcs8(untrusted::Input::from(pkcs8_bytes.as_ref()))?
+}
+
+
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
     access_token: String,
@@ -10,7 +29,7 @@ pub struct Token {
 type Key = String;
 
 impl Token {
-    fn new(expiry: u32, scope: Scope, token_type: TokenType, key: Key) {
+    fn new(expiry: u32, scope: Scope, token_type: TokenType, key: KeyPair) {
         Token {
             access_token: "".to_string(),
             token_type: TokenType::Bearer,
@@ -20,7 +39,7 @@ impl Token {
     }
 
     fn verify(&self, key: Key) -> bool {
-        
+
     }
 }
 

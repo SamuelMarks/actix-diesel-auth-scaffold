@@ -32,8 +32,11 @@ mod oauth;
 
 use db::{CreateUser, GetToken, Authorise, DbExecutor};
 
+use oauth::{generate_keypair, KeyPair};
+
 struct AppState {
     db: Addr<DbExecutor>,
+    keypair: KeyPair,
 }
 
 
@@ -112,7 +115,8 @@ fn main() {
 
     // Start http server
     server::new(move || {
-        App::with_state(AppState{db: addr.clone()})
+
+        App::with_state(AppState{db: addr.clone(), keypair: generate_keypair()})
             // enable logger
             .middleware(middleware::Logger::default())
             .resource("/user", |r| {

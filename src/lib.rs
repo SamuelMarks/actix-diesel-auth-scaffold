@@ -1,10 +1,11 @@
-//#[macro_use]
-//extern crate lazy_static;
-//
-//#[macro_use]
-//extern crate diesel;
-
-//pub mod auth;
-//pub mod config;
-//pub mod user;
 pub mod models;
+pub mod schema;
+pub mod oauth;
+pub mod db;
+pub mod state;
+pub mod config;
+
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate diesel;

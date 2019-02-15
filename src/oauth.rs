@@ -3,7 +3,6 @@ use ring::{
     signature::{self, KeyPair},
 };
 
-
 use jsonwebtoken::errors::Error;
 use jsonwebtoken::{decode, encode, Header, Validation, TokenData};
 
@@ -62,4 +61,3 @@ pub struct Credentials {
     pub username: String,
     pub password: String,
 }
-

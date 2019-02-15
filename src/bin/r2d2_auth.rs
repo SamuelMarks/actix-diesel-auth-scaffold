@@ -36,55 +36,9 @@ use actix_diesel_auth_scaffold::state;
 use actix_diesel_auth_scaffold::config;
 
 
-#[derive(Debug, Serialize, Deserialize)]
-struct MyUser {
-    name: String,
-    password: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct GetTokenReq {
-    name: String,
-    password: String,
-}
-
 const MAX_SIZE: usize = 262_144; // max payload size is 256k
 
 
-fn create_user((item, state): (Json<MyUser>, State<state::AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-    let copy = item.into_inner();
-
-    state.db
-         .send(db::CreateUser {
-             name: copy.name.clone(),
-             password: copy.password.clone(),
-         })
-         .from_err()
-         .and_then(|res| match res {
-             Ok(user) => Ok(HttpResponse::Ok().json(user)),
-             Err(_) => Ok(HttpResponse::InternalServerError().into()),
-         })
-}
-
-fn get_token((item, state): (Json<GetTokenReq>, State<state::AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-
-    let copy = item.into_inner();
-
-    state
-        .db
-        .send(db::GetToken {
-            grant_type: "password".to_string(),
-            username: copy.name.clone(),
-            password: copy.password.clone(),
-        })
-        .from_err()
-        .and_then(|res| match res {
-            Ok(user) => Ok(HttpResponse::Ok().json(user)),
-            Err(_) => Ok(HttpResponse::InternalServerError().into()),
-        })
-
-
-}
 //
 //fn authorise((item, state): (Json<oauth::Token>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
 //

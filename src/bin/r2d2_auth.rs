@@ -31,7 +31,7 @@ use futures::{future, Future, Stream};
 use actix_diesel_auth_scaffold::db;
 use actix_diesel_auth_scaffold::models;
 use actix_diesel_auth_scaffold::schema;
-use actix_diesel_auth_scaffold::oauth;
+use actix_diesel_auth_scaffold::auth;
 use actix_diesel_auth_scaffold::state;
 use actix_diesel_auth_scaffold::config;
 
@@ -39,15 +39,7 @@ use actix_diesel_auth_scaffold::config;
 const MAX_SIZE: usize = 262_144; // max payload size is 256k
 
 
-//
-//fn authorise((item, state): (Json<oauth::Token>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-//
-//    let copy = item.into_inner();
-//
-//    oauth::is_token_valid(copy, state.secret.clone())
-//
-//
-//}
+
 
 fn main() {
     ::std::env::set_var("RUST_LOG", "actix_web=info");

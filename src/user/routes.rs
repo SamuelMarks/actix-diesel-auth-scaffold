@@ -6,14 +6,10 @@ use actix_web::{
 use crate::state::AppState;
 use crate::db;
 
-
 use futures::{future, Future, Stream};
 
-
-
-
 #[derive(Debug, Serialize, Deserialize)]
-struct GetTokenReq {
+struct MyUser {
     name: String,
     password: String,
 }

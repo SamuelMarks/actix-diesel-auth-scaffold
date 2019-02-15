@@ -76,3 +76,13 @@ impl Handler<GetToken> for super::DbExecutor {
 //
 //    }
 //}
+
+//
+//fn authorise((item, state): (Json<oauth::Token>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
+//
+//    let copy = item.into_inner();
+//
+//    oauth::is_token_valid(copy, state.secret.clone())
+//
+//
+//}

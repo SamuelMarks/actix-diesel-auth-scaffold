@@ -9,7 +9,7 @@ use crate::db;
 use futures::{future, Future, Stream};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct MyUser {
+struct GetTokenReq {
     name: String,
     password: String,
 }

@@ -57,7 +57,7 @@ pub enum Scope {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Credentials {
-    pub username: String,
-    pub password: String,
+pub struct ClientCredentials {
+    pub client_id: String,
+    pub client_secret: String,
 }

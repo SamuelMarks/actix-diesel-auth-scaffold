@@ -1,4 +1,4 @@
-use crate::schema::users;
+use super::schema::users;
 
 #[derive(Serialize, Queryable)]
 pub struct User {

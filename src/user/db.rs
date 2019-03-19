@@ -1,39 +1,40 @@
 use actix_web::*;
-use diesel;
-use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
 use uuid;
 
 use actix_web::actix::*;
 
-use crate::models;
-use crate::schema;
-use crate::state::AppState;
-use crate::config::SECRET;
-
 use actix_web::error::*;
 use actix_web::error;
 
+use diesel::*;
+
+use crate::DbExecutor;
+
+use super::model::{User, NewUser};
+use super::schema;
+use super::schema::users::dsl::*;
 
 pub struct CreateUser {
     pub name: String,
     pub password: String,
 }
 
-
 impl Message for CreateUser {
-    type Result = Result<models::user::User, Error>;
+    type Result = Result<User, Error>;
 }
 
 
-impl Handler<CreateUser> for super::DbExecutor {
-    type Result = Result<models::user::User, Error>;
+impl Handler<CreateUser> for DbExecutor {
+
+
+    type Result = Result<User, Error>;
 
     fn handle(&mut self, msg: CreateUser, _: &mut Self::Context) -> Self::Result {
-        use self::schema::users::dsl::*;
+
+
 
         let uuid = format!("{}", uuid::Uuid::new_v4());
-        let new_user = models::user::NewUser {
+        let new_user = NewUser {
             id: &uuid,
             name: &msg.name,
             password: &msg.password,
@@ -48,7 +49,7 @@ impl Handler<CreateUser> for super::DbExecutor {
 
         let mut items = users
             .filter(id.eq(&uuid))
-            .load::<models::user::User>(conn)
+            .load::<User>(conn)
             .map_err(|_| error::ErrorInternalServerError("Error loading person"))?;
 
         Ok(items.pop().unwrap())

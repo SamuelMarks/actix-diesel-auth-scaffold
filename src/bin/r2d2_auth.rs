@@ -28,17 +28,16 @@ use diesel::prelude::*;
 use diesel::r2d2::ConnectionManager;
 use futures::{future, Future, Stream};
 
-use actix_diesel_auth_scaffold::db;
-use actix_diesel_auth_scaffold::models;
-use actix_diesel_auth_scaffold::schema;
-use actix_diesel_auth_scaffold::auth;
-use actix_diesel_auth_scaffold::state;
-use actix_diesel_auth_scaffold::config;
+use actix_diesel_auth_scaffold::oauth2::*;
+use actix_diesel_auth_scaffold::user::routes::create_user;
+use actix_diesel_auth_scaffold::DbExecutor;
+use actix_diesel_auth_scaffold::auth::db::*;
+use actix_diesel_auth_scaffold::auth::routes::get_token;
+use actix_diesel_auth_scaffold::*;
+
 
 
 const MAX_SIZE: usize = 262_144; // max payload size is 256k
-
-
 
 
 fn main() {
@@ -51,13 +50,11 @@ fn main() {
         .build(manager)
         .expect("Failed to create pool.");
 
-    let addr = SyncArbiter::start(3, move || db::DbExecutor(pool.clone()));
+    let addr = SyncArbiter::start(3, move || DbExecutor(pool.clone()));
 
 
     server::new(move || {
-
-        App::with_state(state::AppState{db: addr.clone()})
-            // enable logger
+        App::with_state(AppState{db: addr.clone()})
             .middleware(middleware::Logger::default())
             .resource("/user", |r| {
                 r.method(http::Method::POST).with_async(create_user)

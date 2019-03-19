@@ -3,6 +3,9 @@ use ring::{
     signature::{self, KeyPair},
 };
 
+pub mod db;
+pub mod routes;
+
 use jsonwebtoken::errors::Error;
 use jsonwebtoken::{decode, encode, Header, Validation, TokenData};
 

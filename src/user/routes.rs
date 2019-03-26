@@ -1,17 +1,33 @@
-use actix_web::{http::Method, App, HttpRequest, Path, Responder};
+use actix::prelude::*;
+use actix_web::{
+    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, Error, HttpRequest,
+    State, HttpMessage, error, Json
+};
 
-fn index(_req: HttpRequest) -> impl Responder {
-    "[user/routes.rs] Hello from the index page"
+
+use crate::AppState;
+
+use futures::{future, Future, Stream};
+
+use super::db::CreateUser;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MyUser {
+    pub name: String,
+    pub password: String,
 }
 
-fn hello(path: Path<String>) -> impl Responder {
-    format!("[user/routes.rs] `hello` with arg: {}", *path)
-}
+pub fn create_user((item, state): (Json<MyUser>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
+    let copy = item.into_inner();
 
-#[inline(always)]
-pub fn get_routes() -> App {
-    App::new()
-        .prefix(format!("/{}", &*module_path!().split("::").nth(1).unwrap()))
-        .resource("/", |r| r.method(Method::GET).with(index))
-        .resource("/hello/{name}", |r| r.method(Method::GET).with(hello))
+    state.db
+        .send(CreateUser {
+            name: copy.name.clone(),
+            password: copy.password.clone(),
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(user) => Ok(HttpResponse::Ok().json(user)),
+            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+        })
 }

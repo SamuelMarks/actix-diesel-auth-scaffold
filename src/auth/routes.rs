@@ -1,17 +1,36 @@
-use actix_web::{http::Method, App, HttpRequest, Path, Responder};
+use actix::prelude::*;
+use actix_web::{
+    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, Error, HttpRequest,
+    State, HttpMessage, error, Json
+};
+use crate::AppState;
 
-fn index(_req: HttpRequest) -> impl Responder {
-    "[auth/routes.rs] `index`"
+
+use futures::{future, Future, Stream};
+
+#[derive(Debug, Serialize, Deserialize, Message)]
+pub struct GetTokenReq {
+    username: String,
+    grant_type: String,
+    password: String,
 }
 
-fn hello(path: Path<String>) -> impl Responder {
-    format!("[auth/routes.rs] `hello` with arg: {}", *path)
-}
+pub fn get_token((item, state): (Json<GetTokenReq>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
 
-#[inline(always)]
-pub fn get_routes() -> App {
-    App::new()
-        .prefix(format!("/{}", &*module_path!().split("::").nth(1).unwrap()))
-        .resource("/", |r| r.method(Method::GET).with(index))
-        .resource("/hello/{name}", |r| r.method(Method::GET).with(hello))
+    let copy = item.into_inner();
+
+    state
+        .db
+        .send(super::db::GetToken {
+            grant_type: "password".to_string(),
+            username: copy.username.clone(),
+            password: copy.password.clone(),
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(user) => Ok(HttpResponse::Ok().json(user)),
+            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+        })
+
+
 }

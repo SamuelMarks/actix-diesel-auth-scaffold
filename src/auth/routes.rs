@@ -1,10 +1,9 @@
+use crate::AppState;
 use actix::prelude::*;
 use actix_web::{
-    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, Error, HttpRequest,
-    State, HttpMessage, error, Json
+    error, http, middleware, server, App, AsyncResponder, Error, FutureResponse, HttpMessage,
+    HttpRequest, HttpResponse, Json, Path, State,
 };
-use crate::AppState;
-
 
 use futures::{future, Future, Stream};
 
@@ -15,8 +14,9 @@ pub struct GetTokenReq {
     password: String,
 }
 
-pub fn get_token((item, state): (Json<GetTokenReq>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
-
+pub fn get_token(
+    (item, state): (Json<GetTokenReq>, State<AppState>),
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let copy = item.into_inner();
 
     state
@@ -31,6 +31,4 @@ pub fn get_token((item, state): (Json<GetTokenReq>, State<AppState>)) -> impl Fu
             Ok(user) => Ok(HttpResponse::Ok().json(user)),
             Err(_) => Ok(HttpResponse::InternalServerError().into()),
         })
-
-
 }

@@ -1,25 +1,25 @@
 [package]
 name = "actix-diesel-auth-scaffold"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Samuel Marks @SamuelMarks"]
 edition = "2018"
 
 [dependencies]
 
-bytes = "0.4"
-env_logger = "0.5"
+bytes = "0.4.12"
+env_logger = "0.6.1"
 
-actix = "0.7"
-actix-web = "0.7"
+actix = "0.7.9"
+actix-web = "0.7.18"
 
-futures = "0.1"
-uuid = { version = "0.5", features = ["serde", "v4"] }
-serde = "1.0"
-serde_json = "1.0"
-serde_derive = "1.0"
+futures = "0.1.25"
+uuid = { version = "0.7.3", features = ["serde", "v4"] }
+serde = "1.0.89"
+serde_json = "1.0.39"
+serde_derive = "1.0.89"
 
-diesel = { version = "^1.1.0", features = ["sqlite", "r2d2"] }
-r2d2 = "0.8"
-dotenv = "0.10"
-ring = "*"
-jsonwebtoken = "*"
+diesel = { version = "1.4.2", features = ["sqlite", "r2d2"] }
+r2d2 = "0.8.3"
+dotenv = "0.13.0"
+ring = "^0.13"
+jsonwebtoken = "5.0.1"

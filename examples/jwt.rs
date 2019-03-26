@@ -1,4 +1,3 @@
-
 #[macro_use]
 extern crate serde_derive;
 
@@ -13,8 +12,11 @@ struct Claims {
 }
 
 fn main() {
-    let my_claims =
-        Claims { sub: "b@b.com".to_owned(), company: "ACME".to_owned(), exp: 10000000000 };
+    let my_claims = Claims {
+        sub: "b@b.com".to_owned(),
+        company: "ACME".to_owned(),
+        exp: 10000000000,
+    };
     let key = "secret";
     let token = match encode(&Header::default(), &my_claims, key.as_ref()) {
         Ok(t) => t,
@@ -23,7 +25,10 @@ fn main() {
 
     println!("{}", token);
 
-    let validation = Validation { sub: Some("b@b.com".to_string()), ..Validation::default() };
+    let validation = Validation {
+        sub: Some("b@b.com".to_string()),
+        ..Validation::default()
+    };
     let token_data = match decode::<Claims>(&token, key.as_ref(), &validation) {
         Ok(c) => c,
         Err(err) => match *err.kind() {

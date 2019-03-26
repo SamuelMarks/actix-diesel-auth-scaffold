@@ -7,7 +7,7 @@ pub mod db;
 pub mod routes;
 
 use jsonwebtoken::errors::Error;
-use jsonwebtoken::{decode, encode, Header, Validation, TokenData};
+use jsonwebtoken::{decode, encode, Header, TokenData, Validation};
 
 pub fn generate_oauth_secret() -> String {
     "secret".to_string()
@@ -50,13 +50,12 @@ impl Token {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum TokenType {
-    Bearer
+    Bearer,
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Scope {
-    Create
+    Create,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -3,14 +3,14 @@ use uuid;
 
 use actix_web::actix::*;
 
-use actix_web::error::*;
 use actix_web::error;
+use actix_web::error::*;
 
 use diesel::*;
 
 use crate::DbExecutor;
 
-use super::model::{User, NewUser};
+use super::model::{NewUser, User};
 use super::schema;
 use super::schema::users::dsl::*;
 
@@ -23,16 +23,10 @@ impl Message for CreateUser {
     type Result = Result<User, Error>;
 }
 
-
 impl Handler<CreateUser> for DbExecutor {
-
-
     type Result = Result<User, Error>;
 
     fn handle(&mut self, msg: CreateUser, _: &mut Self::Context) -> Self::Result {
-
-
-
         let uuid = format!("{}", uuid::Uuid::new_v4());
         let new_user = NewUser {
             id: &uuid,

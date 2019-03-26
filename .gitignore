@@ -3,3 +3,4 @@
 .idea
 actix-diesel-auth-scaffold.iml
 .env
+test.db

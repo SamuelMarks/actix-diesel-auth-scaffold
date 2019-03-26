@@ -6,14 +6,13 @@ use uuid;
 
 use actix_web::actix::*;
 
-use actix_web::error::*;
 use actix_web::error;
-
+use actix_web::error::*;
 
 use super::Claims;
-use crate::SECRET;
-use crate::DbExecutor;
 use crate::user::model::{NewUser, User};
+use crate::DbExecutor;
+use crate::SECRET;
 
 use crate::oauth2::AccessToken;
 
@@ -21,7 +20,6 @@ pub struct GetToken {
     pub grant_type: String,
     pub username: String,
     pub password: String,
-
 }
 
 impl Message for GetToken {
@@ -53,8 +51,7 @@ impl Handler<GetToken> for DbExecutor {
         //TODO: fix unwrap
         let user = items.pop().unwrap();
 
-
-        let claims = Claims{
+        let claims = Claims {
             username: msg.username.clone(),
         };
 

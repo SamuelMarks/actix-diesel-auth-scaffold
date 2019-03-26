@@ -1,9 +1,8 @@
 use actix::prelude::*;
 use actix_web::{
-    http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path, Error, HttpRequest,
-    State, HttpMessage, error, Json
+    error, http, middleware, server, App, AsyncResponder, Error, FutureResponse, HttpMessage,
+    HttpRequest, HttpResponse, Json, Path, State,
 };
-
 
 use crate::AppState;
 
@@ -17,10 +16,13 @@ pub struct MyUser {
     pub password: String,
 }
 
-pub fn create_user((item, state): (Json<MyUser>, State<AppState>)) -> impl Future<Item = HttpResponse, Error = Error> {
+pub fn create_user(
+    (item, state): (Json<MyUser>, State<AppState>),
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let copy = item.into_inner();
 
-    state.db
+    state
+        .db
         .send(CreateUser {
             name: copy.name.clone(),
             password: copy.password.clone(),

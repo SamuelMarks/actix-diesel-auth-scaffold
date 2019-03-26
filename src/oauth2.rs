@@ -1,14 +1,17 @@
 use actix_web::Error;
 
-//This will be extracted out into a seperate reusable crate
+//This will be extracted out into a separate reusable crate
 pub trait AuthorisationServer {
-    fn get_access_token(auth_grant: AuthorizationGrant) -> Result<(AccessToken, Option<RefreshToken>), Error>;
+    fn get_access_token(
+        auth_grant: AuthorizationGrant,
+    ) -> Result<(AccessToken, Option<RefreshToken>), Error>;
     fn refresh_access_token(refresh_token: RefreshToken) -> Result<AccessToken, Error>;
     fn register_client(client_reg: ClientRegistration) -> Result<(), String>;
 }
 
 pub trait ResourceOwner {
-    fn get_authorization_grant(auth_req: AuthorizationRequest) -> Result<AuthorizationGrant, Error>;
+    fn get_authorization_grant(auth_req: AuthorizationRequest)
+        -> Result<AuthorizationGrant, Error>;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -18,7 +21,6 @@ pub struct RefreshToken(pub String);
 pub struct Authorization {
     application_name: String,
     grant_types: Vec<String>,
-
 }
 
 pub struct AuthorizationGrant;

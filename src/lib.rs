@@ -1,6 +1,6 @@
-pub mod user;
 pub mod auth;
 pub mod oauth2;
+pub mod user;
 
 #[macro_use]
 extern crate serde_derive;
@@ -16,7 +16,6 @@ use diesel::r2d2::{ConnectionManager, Pool};
 use uuid;
 
 pub const SECRET: &str = "secret";
-
 
 pub struct AppState {
     pub db: Addr<DbExecutor>,

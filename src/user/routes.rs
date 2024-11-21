@@ -1,4 +1,4 @@
-use actix_web::{http::Method, App, HttpRequest, Path, Responder};
+use actix_web::{http::Method, App, Path, HttpRequest, Responder};
 
 fn index(_req: HttpRequest) -> impl Responder {
     "[user_routes.rs] Hello from the index page"

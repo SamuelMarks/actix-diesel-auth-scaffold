@@ -22,7 +22,7 @@ fn main() {
             App::new()
                 .resource("/", |r| r.method(Method::GET).with(index))
                 .resource("/hello/{name}", |r| r.method(Method::GET).with(hello)),
-            auth::routes::get_routes() ,
+            auth::routes::get_routes(),
             user::routes::get_routes(),
         ]
     })
